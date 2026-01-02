@@ -808,30 +808,62 @@
     </div>
 
 <div class="modal-overlay" id="cartModal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-width: 500px; max-height: 90vh; overflow-y: auto;">
         <button class="close-btn" onclick="closeCart()">✕</button>
         <h2>🛒 購物車結帳</h2>
         <div id="cartItems" style="margin:15px 0"></div>
         
-        <div style="margin-bottom: 10px; padding: 10px; background: #f0f2f5; border-radius: 4px;">
-            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">🎟️ 使用優惠券：</label>
-            <select id="couponSelector" onchange="displayCart()" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
-                <option value="-1">不使用優惠券</option>
-            </select>
-        </div>
-
-        <div style="margin-bottom: 15px; padding: 10px; background: #fff4e5; border-radius: 4px; border: 1px dashed #ffa502;">
-            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 2px;">💰 會員點數折抵 (100點折1元)：</label>
-            <p style="font-size: 12px; color: #666; margin-bottom: 5px;">您目前擁有：<span class="points-val" style="font-weight:bold; color:#e67e22;">0</span> 點</p>
-            <div style="display: flex; gap: 5px;">
-                <input type="number" id="usePointsAmount" placeholder="輸入點數(需為100倍數)" oninput="displayCart()" step="100" min="0" style="flex: 1; padding: 8px; margin: 0;">
-                <button class="btn btn-secondary" onclick="useMaxPoints()" style="padding: 0 10px; font-size: 12px; white-space: nowrap;">全部折抵</button>
+        <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left;">
+            <label style="font-weight:bold; font-size:14px;">收件人資訊(必填)</label>
+            <input type="text" id="orderName" placeholder="收件人姓名" style="width:100%; padding:8px; margin-top:5px; border:1px solid #ddd; border-radius:4px;">
+            <input type="tel" id="orderPhone" placeholder="聯絡電話" style="width:100%; padding:8px; margin-top:8px; border:1px solid #ddd; border-radius:4px;">
+            
+            <div style="margin-top:10px;">
+                <label style="font-size:13px; color:#666;">到貨地址(必填)</label>
+                <div style="display: flex; gap: 5px; margin-top:5px;">
+                    <input type="text" id="addr1" placeholder="國家(例:台灣)" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                    <input type="text" id="addr2" placeholder="縣市" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                </div>
+                <div style="display: flex; gap: 5px; margin-top:5px;">
+                    <input type="text" id="addr3" placeholder="區域" style="flex:1; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                    <input type="text" id="addr4" placeholder="街道門牌" style="flex:2; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                </div>
             </div>
         </div>
 
-        <div id="discountInfo" style="color: var(--primary-color); font-size: 13px; margin-bottom: 5px; font-weight: bold; line-height: 1.4;"></div>
-        <p style="text-align:right; font-weight:bold; font-size: 1.2em; border-top: 1px solid #eee; pt: 10px;">總計金額：<span id="cartTotal">$0</span></p>
-        <button class="btn btn-primary" style="width:100%; margin-top:15px; font-size: 18px;" onclick="checkoutProcess()">確認下單並支付</button>
+        <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: left;">
+            <label style="font-weight:bold; font-size:14px;">付款方式</label>
+            <select id="paymentMethod" style="width:100%; padding:8px; margin-top:5px; border:1px solid #ddd; border-radius:4px;">
+                <option value="現金付款">現金付款</option>
+                <option value="行動支付" disabled>行動支付 (即將登場)</option>
+                <option value="信用卡" disabled>信用卡 (即將登場)</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 10px; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 4px;">
+            <label style="font-size: 13px; font-weight: bold;">🎟️ 優惠券：</label>
+            <select id="couponSelector" onchange="displayCart()" style="width:100%; padding:5px; border-radius:4px; border:1px solid #ccc;"></select>
+        </div>
+
+        <div style="margin-bottom: 10px; padding: 10px; background: #fff4e5; border-radius: 4px;">
+            <label style="font-size: 13px; font-weight: bold;">💰 點數折抵：</label>
+            <div style="display: flex; gap: 5px; margin-top:5px;">
+                <input type="number" id="usePointsAmount" placeholder="100倍數" oninput="displayCart()" onchange="this.value = Math.floor(this.value/100)*100; displayCart();" step="100" min="0" style="flex: 1; padding: 5px;">
+                <button class="btn-secondary" onclick="useMaxPoints()" style="padding:0 5px; font-size:11px;">全部折抵</button>
+            </div>
+        </div>
+
+        <div id="discountInfo" style="color: var(--primary-color); font-size: 13px; margin-bottom: 5px; font-weight: bold;"></div>
+        <p style="text-align:right; font-weight:bold; font-size: 1.2em;">實付總計：<span id="cartTotal">$0</span></p>
+        <button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="checkoutProcess()">確認下單並支付</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="orderSuccessModal">
+    <div class="modal-content" style="text-align: left;">
+        <h2 style="color: #2ecc71; text-align: center;">🎉 訂單已建立</h2>
+        <div id="orderDetailContent" style="margin: 20px 0; line-height: 1.8; border-top: 1px solid #eee; padding-top: 15px;"></div>
+        <button class="btn btn-primary" style="width: 100%;" onclick="closeModal('orderSuccessModal')">關閉</button>
     </div>
 </div>
 
@@ -1334,17 +1366,81 @@ window.addEventListener('resize', () => {
             }
         }
 
-        function checkoutProcess() {
-            if (cart.length === 0) return showNotification('購物車是空的', 'error');
-            const total = getCartFinalTotal();
-            currentUser.totalSpent = (currentUser.totalSpent || 0) + total;
-            localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
-            updateMemberRank();
-            cart = [];
-            saveCart();
-            closeCart();
-            showNotification(`結帳成功！本次消費 $${total}，已累計至會員門檻。`, 'success');
-        }
+        window.checkoutProcess = function() {
+    if (cart.length === 0) return showNotification('購物車是空的', 'error');
+
+    // 1. 獲取並驗證收件資訊
+    const name = document.getElementById('orderName').value;
+    const phone = document.getElementById('orderPhone').value;
+    const a1 = document.getElementById('addr1').value;
+    const a2 = document.getElementById('addr2').value;
+    const a3 = document.getElementById('addr3').value;
+    const a4 = document.getElementById('addr4').value;
+    const payment = document.getElementById('paymentMethod').value;
+
+    if (!name || !phone || !a1 || !a2 || !a3 || !a4) {
+        return showNotification('請填寫完整收件資訊與地址', 'error');
+    }
+
+    // 2. 處理點數與優惠券 (維持原本防呆邏輯)
+    let usePoints = validatePointsInput();
+    const pointsDiscount = Math.floor(usePoints / 100);
+    const actualUsedPoints = pointsDiscount * 100;
+
+    const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+    const selector = document.getElementById('couponSelector');
+    const selectedIndex = parseInt(selector.value);
+    
+    let currentPrice = subtotal;
+    let usedCouponText = "無";
+
+    if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
+        const coupon = checkInData.coupons[selectedIndex];
+        usedCouponText = coupon.text;
+        if (coupon.type === 'percent') currentPrice = Math.floor(subtotal * coupon.value);
+        else if (coupon.type === 'cash') currentPrice = Math.max(0, subtotal - coupon.value);
+        checkInData.coupons.splice(selectedIndex, 1);
+    }
+
+    const finalPrice = Math.max(0, currentPrice - pointsDiscount);
+
+    // 3. 正式執行扣除點數與存檔
+    checkInData.points -= actualUsedPoints;
+    saveCheckInData();
+
+    currentUser.totalSpent = (currentUser.totalSpent || 0) + finalPrice;
+    localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
+    updateMemberRank();
+
+    // 4. 生成訂單資訊並顯示
+    const orderItemsHTML = cart.map(item => `<li>${item.name} x ${item.quantity} ($${item.price * item.quantity})</li>`).join('');
+    const fullAddress = `(${a1}) (${a2}) (${a3}) (${a4})`;
+    
+    document.getElementById('orderDetailContent').innerHTML = `
+        <p><strong>收件人：</strong> ${name}</p>
+        <p><strong>聯絡電話：</strong> ${phone}</p>
+        <p><strong>到貨地址：</strong> ${fullAddress}</p>
+        <p><strong>付款方式：</strong> ${payment}</p>
+        <hr>
+        <p><strong>購買清單：</strong></p>
+        <ul style="padding-left: 20px; font-size: 14px;">${orderItemsHTML}</ul>
+        <hr>
+        <p>原始金額：$${subtotal}</p>
+        <p>使用優惠券：${usedCouponText}</p>
+        <p>點數折抵：-$${pointsDiscount} (${actualUsedPoints} 點)</p>
+        <p style="font-size: 1.2em; color: #e74c3c;"><strong>應付總計：$${finalPrice}</strong></p>
+    `;
+
+    // 5. 清理並關閉購物車，打開成功框
+    cart = [];
+    saveCart();
+    // 清空輸入框
+    ['orderName', 'orderPhone', 'addr1', 'addr2', 'addr3', 'addr4', 'usePointsAmount'].forEach(id => document.getElementById(id).value = "");
+    selector.value = "-1";
+    
+    closeCart();
+    document.getElementById('orderSuccessModal').classList.add('active');
+};
 
         function addToCart(id) {
             if (!currentUser) return openLogin();
@@ -1620,49 +1716,82 @@ function saveCart() {
         }
     }
     
-    function checkoutProcess() {
-            if (cart.length === 0) return showNotification('購物車是空的', 'error');
-            
-            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-            let bestPrice = subtotal;
-            let appliedCouponIndex = -1; // 用於記錄被使用的優惠券索引
+window.checkoutProcess = function() {
+    if (cart.length === 0) return showNotification('購物車是空的', 'error');
 
-            // 1. 尋找最佳優惠券並記錄其位置
-            if (currentUser && checkInData.coupons.length > 0) {
-                checkInData.coupons.forEach((coupon, index) => {
-                    let currentPrice = subtotal;
-                    if (coupon.type === 'percent') {
-                        currentPrice = Math.floor(subtotal * coupon.value);
-                    } else if (coupon.type === 'cash') {
-                        currentPrice = Math.max(0, subtotal - coupon.value);
-                    }
-                    
-                    if (currentPrice < bestPrice) {
-                        bestPrice = currentPrice;
-                        appliedCouponIndex = index; // 記錄這張券的 index
-                    }
-                });
-            }
+    // 1. 獲取並驗證所有必填欄位
+    const name = document.getElementById('orderName').value.trim();
+    const phone = document.getElementById('orderPhone').value.trim();
+    const a1 = document.getElementById('addr1').value.trim();
+    const a2 = document.getElementById('addr2').value.trim();
+    const a3 = document.getElementById('addr3').value.trim();
+    const a4 = document.getElementById('addr4').value.trim();
+    const payment = document.getElementById('paymentMethod').value;
 
-            // 2. 更新會員累計消費金額
-            currentUser.totalSpent = (currentUser.totalSpent || 0) + bestPrice;
-            localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
-            updateMemberRank();
+    // 嚴格必填檢查
+    if (!name || !phone || !a1 || !a2 || !a3 || !a4) {
+        return showNotification('收件人、電話及到貨地址（共四格）皆為必填項目！', 'error');
+    }
 
-            // 3. 關鍵修改：如果使用了優惠券，將其從使用者的資料中移除
-            if (appliedCouponIndex !== -1) {
-                const usedCouponName = checkInData.coupons[appliedCouponIndex].text;
-                checkInData.coupons.splice(appliedCouponIndex, 1); // 移除該優惠券
-                saveCheckInData(); // 儲存更新後的點數與優惠券資料
-                console.log(`已使用並移除優惠券：${usedCouponName}`);
-            }
+    // 2. 計算邏輯 (包含 100 倍數點數修正)
+    let usePoints = validatePointsInput();
+    const pointsDiscount = Math.floor(usePoints / 100);
+    const actualUsedPoints = pointsDiscount * 100;
 
-            // 4. 清空購物車與後續提示
-            cart = [];
-            saveCart();
-            closeCart();
-            showNotification(`結帳成功！本次實付 $${bestPrice}，已移除使用的優惠券。`, 'success');
-        }
+    const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+    const selector = document.getElementById('couponSelector');
+    const selectedIndex = parseInt(selector.value);
+    
+    let currentPrice = subtotal;
+    let usedCouponName = "無";
+
+    if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
+        const coupon = checkInData.coupons[selectedIndex];
+        usedCouponName = coupon.text;
+        if (coupon.type === 'percent') currentPrice = Math.floor(subtotal * coupon.value);
+        else if (coupon.type === 'cash') currentPrice = Math.max(0, subtotal - coupon.value);
+        checkInData.coupons.splice(selectedIndex, 1);
+    }
+
+    const finalPrice = Math.max(0, currentPrice - pointsDiscount);
+
+    // 3. 執行扣點與存檔
+    checkInData.points -= actualUsedPoints;
+    saveCheckInData();
+    currentUser.totalSpent = (currentUser.totalSpent || 0) + finalPrice;
+    localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
+    updateMemberRank();
+
+    // 4. 顯示訂單資訊
+    const fullAddress = `(${a1}) (${a2}) (${a3}) (${a4})`;
+    const orderItemsHTML = cart.map(item => `<li>${item.name} x ${item.quantity} ($${item.price * item.quantity})</li>`).join('');
+    
+    document.getElementById('orderDetailContent').innerHTML = `
+        <p><strong>收件人：</strong> ${name}</p>
+        <p><strong>聯絡電話：</strong> ${phone}</p>
+        <p><strong>到貨地址：</strong> ${fullAddress}</p>
+        <p><strong>付款方式：</strong> ${payment}</p>
+        <hr>
+        <p>購買清單：</p>
+        <ul style="padding-left: 20px; font-size: 14px;">${orderItemsHTML}</ul>
+        <hr>
+        <p>使用優惠券：${usedCouponName}</p>
+        <p>點數折抵：-$${pointsDiscount} (消耗 ${actualUsedPoints} 點)</p>
+        <p style="font-size: 1.2em; color: #ff6b6b;"><strong>實付總計：$${finalPrice}</strong></p>
+    `;
+
+    // 5. 重要：清空所有欄位不保留
+    ['orderName', 'orderPhone', 'addr1', 'addr2', 'addr3', 'addr4', 'usePointsAmount'].forEach(id => {
+        document.getElementById(id).value = "";
+    });
+    document.getElementById('paymentMethod').value = "現金付款";
+    selector.value = "-1";
+
+    cart = [];
+    saveCart();
+    closeCart();
+    document.getElementById('orderSuccessModal').classList.add('active');
+};
 
     function checkGameMatchResult() {
         const [c1, c2] = flippedIndices;
@@ -1693,6 +1822,21 @@ function saveCart() {
             const container = document.getElementById('cartItems');
             const selector = document.getElementById('couponSelector');
             const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            const pointsInput = document.getElementById('usePointsAmount');
+    
+    // --- 強化點數倍數處理 ---
+    let usePoints = validatePointsInput(); 
+    // 確保計算與顯示都是 100 的倍數
+    usePoints = Math.floor(usePoints / 100) * 100; 
+    
+    let pointsDiscount = Math.floor(usePoints / 100);
+
+    // 二次防呆：折抵不能大於剩餘金額 (這部分您原本就有，保留即可)
+    if (pointsDiscount > tempPrice) {
+        pointsDiscount = tempPrice;
+        usePoints = pointsDiscount * 100;
+        pointsInput.value = usePoints; // 自動修正回填輸入框
+    }
             
             // 更新下拉選單內容（僅在開啟購物車或更新時執行）
             const savedCouponIndex = selector.value;
@@ -1738,9 +1882,7 @@ function saveCart() {
                 document.getElementById('cartTotal').textContent = `$${subtotal}`;
             }
         };
-
 // 1. 新增：防呆驗證函式 (這是解決打不開的關鍵)
-
 // 補回：全部折抵按鈕的功能函式
         window.useMaxPoints = function() {
             const pointsInput = document.getElementById('usePointsAmount');
@@ -1767,22 +1909,20 @@ window.validatePointsInput = function() {
     if (!pointsInput) return 0;
     
     let val = parseInt(pointsInput.value);
+    if (isNaN(val) || val < 0) return 0;
 
-    // 如果輸入為空或小於 0，重設為 0
-    if (isNaN(val) || val < 0) {
-        // 不必強行改 input 值，讓使用者自己輸入，但計算時回傳 0
-        return 0;
-    }
-
-    // 防呆：上限檢查，不能超過持有的總點數
+    // 1. 核心修正：檢查輸入是否超過使用者擁有的點數上限
     if (val > checkInData.points) {
-        showNotification(`點數不足！您目前僅有 ${checkInData.points} 點`, 'error');
-        val = Math.floor(checkInData.points / 100) * 100; // 自動修正為最大可用的 100 倍數
-        pointsInput.value = val;
+        showNotification(`輸入點數超過持有上限！您目前僅有 ${checkInData.points} 點`, 'error');
+        // 自動修正為使用者目前能用的最大 100 倍數點數
+        val = Math.floor(checkInData.points / 100) * 100;
+        pointsInput.value = val; // 將輸入框數值強制修正回上限
     }
     
-    // 返回值強制向下取 100 的倍數 (例如 150 -> 100)，確保 100 點折 1 元的邏輯正確
-    return Math.floor(val / 100) * 100;
+    // 2. 確保返回結帳邏輯的是 100 的倍數
+    const finalValidPoints = Math.floor(val / 100) * 100;
+    
+    return finalValidPoints;
 };
 
         // 2. 整合版：顯示購物車 (處理 優惠券 + 點數折抵 + 商品清單)
@@ -1846,47 +1986,6 @@ window.validatePointsInput = function() {
                 document.getElementById('cartTotal').textContent = `$${subtotal}`;
             }
         };
-
-        // 3. 整合版：結帳流程 (確保扣除選擇的券與正確的點數)
-        window.checkoutProcess = function() {
-            if (cart.length === 0) return showNotification('購物車是空的', 'error');
-            
-            let usePoints = validatePointsInput();
-            const pointsDiscount = Math.floor(usePoints / 100);
-            const actualUsedPoints = pointsDiscount * 100;
-
-            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-            const selector = document.getElementById('couponSelector');
-            const selectedIndex = parseInt(selector.value);
-            
-            let currentPrice = subtotal;
-
-            if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
-                const coupon = checkInData.coupons[selectedIndex];
-                if (coupon.type === 'percent') currentPrice = Math.floor(subtotal * coupon.value);
-                else if (coupon.type === 'cash') currentPrice = Math.max(0, subtotal - coupon.value);
-                checkInData.coupons.splice(selectedIndex, 1); // 正式移除選中的優惠券
-            }
-
-            const finalPrice = Math.max(0, currentPrice - pointsDiscount);
-
-            // 正式扣點與儲存
-            checkInData.points -= actualUsedPoints;
-            saveCheckInData();
-
-            // 會員消費累積
-            currentUser.totalSpent = (currentUser.totalSpent || 0) + finalPrice;
-            localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
-            updateMemberRank();
-
-            // 重置介面
-            cart = [];
-            saveCart();
-            document.getElementById('usePointsAmount').value = "";
-            selector.value = "-1";
-            closeCart();
-            showNotification(`支付成功！實付 $${finalPrice}，扣除 ${actualUsedPoints} 點`, 'success');
-        };
     // 新增：處理移除商品的函式
     window.removeCartItem = function(index) {
         // 從全域變數 cart 陣列中移除該索引的商品
@@ -1901,7 +2000,6 @@ window.validatePointsInput = function() {
         // 呼叫您原本的 showNotification()
         showNotification('商品已從購物車移除', 'success');
     };
-    
 </script>
 </body>
 </html>
