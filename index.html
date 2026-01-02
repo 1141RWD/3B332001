@@ -55,15 +55,43 @@
         }
 
         /* ========== 導航欄 ========== */
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--box-shadow);
-        }
+        /* ========== 導航欄修改：改為質感白底黑字 ========== */
+.navbar {
+    background: #ffffff; /* 純白背景 */
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    /* 修改陰影為較淺的灰色，符合白色調性 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); 
+    border-bottom: 1px solid #eeeeee; /* 加上淺灰細線區隔 */
+}
 
+/* 強制導覽列內的文字、連結、按鈕為黑色 */
+.nav-links a, 
+.nav-links button, 
+.nav-links span {
+    color: #333333 !important; /* 深灰色（比純黑更有質感） */
+    font-weight: 500;
+}
+
+/* 針對 Logo 品牌名稱如果也想改黑字（若原本是白色） */
+.logo {
+    color: #333333 !important;
+}
+
+/* 滑鼠移上去時的效果（稍微變淡或變色） */
+.nav-links a:hover, 
+.nav-links button:hover {
+    color: var(--primary-color) !important; /* 懸停時變回您的主色調紅色 */
+    opacity: 1;
+}
+
+/* 會員區塊按鈕背景稍微加深，以便在白底上顯現 */
+.user-display-btn {
+    background: #f5f5f5 !important; /* 淺灰色背景 */
+    color: #333333 !important;
+}
         .navbar-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -74,15 +102,17 @@
         }
 
         .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.3s;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333333 !important; /* 確保在白底導覽列是黑字 */
+        cursor: pointer;           /* 滑鼠移上去會變成手指頭 */
+        transition: transform 0.2s, opacity 0.2s;
+        user-select: none;         /* 防止文字被選取藍藍的 */
         }
 
         .logo:hover {
-            transform: scale(1.05);
+        transform: scale(1.02);    /* 稍微放大增加互動感 */
+        opacity: 0.8;              /* 稍微變透明 */
         }
 
         .nav-links {
@@ -274,19 +304,28 @@
 
         /* ========== 首頁英雄區 ========== */
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23ff6b6b" width="1200" height="600"/><circle cx="200" cy="150" r="100" fill="%234ecdc4" opacity="0.3"/><circle cx="1000" cy="450" r="150" fill="%234ecdc4" opacity="0.3"/></svg>');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            height: 600px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
+        /* 1. 保留漸層遮罩，可以讓白色的文字在任何背景上都清晰可見 */
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                url('首頁2.jpg'); /* 直接填入您的圖片檔名 */
+    
+        /* 2. 確保圖片填滿整個區域且不變形 */
+        background-size: contain;
+    
+        /* 3. 圖片置中顯示 */
+        background-position: center;
+    
+        /* 4. 滾動時圖片固定（產生視差效果），若不喜歡可改為 scroll */
+        background-attachment: fixed;
+    
+        /* 以下維持原狀 */
+        height: 600px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
         }
 
         .hero-content {
@@ -352,24 +391,22 @@
             border-radius: 2px;
         }
 
-        .featured-products {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
+        /* 修改：熱銷產品卡片寬度，確保一列顯示 4 個 (扣除 gap) */
+        .featured-products .product-card {
+            flex: 0 0 calc(25% - 23px); /* 25% 寬度減去間距補償 */
+            min-width: 250px; /* 保持最小寬度防止變形 */
         }
 
-        .product-card {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--box-shadow);
-            transition: all 0.3s;
-            cursor: pointer;
+        /* 手機與平板適應 */
+        @media (max-width: 1100px) {
+            .featured-products .product-card { flex: 0 0 calc(33.33% - 20px); } /* 顯示 3 個 */
         }
-
+        @media (max-width: 850px) {
+        .featured-products .product-card { flex: 0 0 calc(50% - 15px); } /* 顯示 2 個 */
+        }
+        @media (max-width: 600px) {
+            .featured-products .product-card { flex: 0 0 100%; } /* 顯示 1 個 */
+        }
         .product-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -529,6 +566,39 @@
         .notification.success { background: #2ecc71; }
         .notification.error { background: #e74c3c; }
 
+        /* 輪播箭頭樣式 */
+.nav-arrow {
+    position: absolute;
+    top: 55%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 10;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.nav-arrow:hover { background: var(--primary-color); }
+
+/* 修改熱銷產品容器為滑軌模式 */
+.featured-products .product-card {
+    flex: 0 0 calc(25% - 23px); /* 每次顯示 4 個卡片 */
+    min-width: 250px;
+}
+
+@media (max-width: 992px) {
+    .featured-products .product-card { flex: 0 0 calc(50% - 15px); } /* 螢幕小於 992px 顯示 2 個 */
+}
+@media (max-width: 600px) {
+    .featured-products .product-card { flex: 0 0 100%; } /* 手機版顯示 1 個 */
+}
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -542,7 +612,9 @@
 
     <nav class="navbar">
         <div class="navbar-container">
-            <div class="logo" onclick="goToHome()">👗UHS 時尚服飾店</div>
+            <div class="logo" onclick="goToHome()" style="cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                <span>👗 UHS 時尚服飾店</span>
+            </div>
             <div class="nav-links">
                 <a href="#" onclick="goToHome(); return false;">首頁</a>
                 <a href="#" onclick="goToShop(); return false;">商品</a>
@@ -678,8 +750,13 @@
             </div>
         </div>
         <div class="featured-section">
-            <h2 class="section-title">🔥 熱銷產品</h2>
-            <div class="featured-products" id="featuredProducts"></div>
+        <h2 class="section-title">🔥 熱銷產品</h2>
+            <div style="position: relative; max-width: 1200px; margin: 0 auto; overflow: hidden;">
+                <button class="nav-arrow prev" onclick="moveSlide(-1)" style="left: 10px;">&#10094;</button>
+            <div class="featured-products" id="featuredProducts" style="display: flex; gap: 30px; transition: transform 0.5s ease-in-out; margin-top: 40px; justify-content: flex-start;">
+            </div>
+        <button class="nav-arrow next" onclick="moveSlide(1)" style="right: 10px;">&#10095;</button>
+    </div>
         </div>
         <div class="categories-section">
             <div class="categories-container">
@@ -693,12 +770,16 @@
         <div class="main-container">
             <div class="sidebar">
                 <div class="filter-title">🔍 篩選</div>
-                <div id="filterCategoryContainer"></div>
-                <div class="price-range">
-                    <p>最高: $<span id="priceValue">2000</span></p>
-                    <input type="range" id="priceRange" min="0" max="2000" value="2000" onchange="filterProducts()">
-                </div>
+    
+                <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="搜尋商品名稱..." oninput="filterProducts()" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
+    <div id="filterCategoryContainer"></div>
+    <div class="price-range">
+        <p>最高: $<span id="priceValue">2000</span></p>
+        <input type="range" id="priceRange" min="0" max="2000" value="2000" onchange="filterProducts()">
+    </div>
+</div>
             <div class="products-section" id="productsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
         </div>
     </div>
@@ -726,16 +807,33 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="cartModal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeCart()">✕</button>
-            <h2>🛒 購物車</h2>
-            <div id="cartItems" style="margin:20px 0"></div>
-            <div id="discountInfo" style="color: var(--primary-color); font-size: 14px; margin-bottom: 5px; font-weight: bold;"></div>
-            <p style="text-align:right; font-weight:bold; font-size: 1.2em;">總計：<span id="cartTotal">$0</span></p>
-            <button class="btn btn-primary" style="width:100%; margin-top:15px" onclick="checkoutProcess()">前往結帳</button>
+<div class="modal-overlay" id="cartModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="closeCart()">✕</button>
+        <h2>🛒 購物車結帳</h2>
+        <div id="cartItems" style="margin:15px 0"></div>
+        
+        <div style="margin-bottom: 10px; padding: 10px; background: #f0f2f5; border-radius: 4px;">
+            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 5px;">🎟️ 使用優惠券：</label>
+            <select id="couponSelector" onchange="displayCart()" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                <option value="-1">不使用優惠券</option>
+            </select>
         </div>
+
+        <div style="margin-bottom: 15px; padding: 10px; background: #fff4e5; border-radius: 4px; border: 1px dashed #ffa502;">
+            <label style="font-size: 13px; font-weight: bold; display: block; margin-bottom: 2px;">💰 會員點數折抵 (100點折1元)：</label>
+            <p style="font-size: 12px; color: #666; margin-bottom: 5px;">您目前擁有：<span class="points-val" style="font-weight:bold; color:#e67e22;">0</span> 點</p>
+            <div style="display: flex; gap: 5px;">
+                <input type="number" id="usePointsAmount" placeholder="輸入點數(需為100倍數)" oninput="displayCart()" step="100" min="0" style="flex: 1; padding: 8px; margin: 0;">
+                <button class="btn btn-secondary" onclick="useMaxPoints()" style="padding: 0 10px; font-size: 12px; white-space: nowrap;">全部折抵</button>
+            </div>
+        </div>
+
+        <div id="discountInfo" style="color: var(--primary-color); font-size: 13px; margin-bottom: 5px; font-weight: bold; line-height: 1.4;"></div>
+        <p style="text-align:right; font-weight:bold; font-size: 1.2em; border-top: 1px solid #eee; pt: 10px;">總計金額：<span id="cartTotal">$0</span></p>
+        <button class="btn btn-primary" style="width:100%; margin-top:15px; font-size: 18px;" onclick="checkoutProcess()">確認下單並支付</button>
     </div>
+</div>
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
@@ -810,7 +908,7 @@
             showNotification('註冊成功'); toggleAuthForm('login');
         }
         
-        function performLogin() {
+function performLogin() {
             const email = document.getElementById('loginEmail').value, password = document.getElementById('loginPassword').value;
             const rememberMe = document.getElementById('rememberMe').checked;
             const user = JSON.parse(localStorage.getItem(`user_${email}`));
@@ -827,10 +925,21 @@
             updateMemberRank();
             document.getElementById('userArea').style.display = 'inline-block';
             document.getElementById('loginBtn').style.display = 'none';
-            closeLogin(); loadCheckInData(); showNotification('登入成功');
+            closeLogin(); 
+            loadCheckInData(); 
+            
+            // 關鍵修改：登入後載入該帳號購物車
+            loadCart(); 
+            
+            showNotification('登入成功');
         }
         
-        function logout() { currentUser = null; location.reload(); }
+function logout() { 
+            currentUser = null; 
+            cart = []; // 關鍵修改：登出時清空記憶體中的購物車
+            localStorage.removeItem('cart'); // 清除未登入狀態的暫存
+            location.reload(); 
+        }
 
         // ========== 下拉選單與等級制會員 ==========
         function toggleUserDropdown() {
@@ -907,26 +1016,28 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // ========== 導覽邏輯 ==========
+// ========== 導覽邏輯：確保每次切換都隱藏所有分頁 ==========
         function goToHome() {
-            document.getElementById('homePage').style.display = 'block';
-            document.getElementById('shopPage').style.display = 'none';
-            document.getElementById('resalePage').style.display = 'none';
-            window.scrollTo(0,0);
+        document.getElementById('homePage').style.display = 'block';
+        document.getElementById('shopPage').style.display = 'none';
+        document.getElementById('resalePage').style.display = 'none';
+        document.getElementById('miniGamePage').style.display = 'none'; // 確保遊戲頁被隱藏
+        window.scrollTo(0,0);
         }
         function goToShop() {
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('shopPage').style.display = 'block';
             document.getElementById('resalePage').style.display = 'none';
+            document.getElementById('miniGamePage').style.display = 'none'; // 隱藏遊戲
             window.scrollTo(0,0);
         }
         function goToResale() {
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('shopPage').style.display = 'none';
             document.getElementById('resalePage').style.display = 'block';
+            document.getElementById('miniGamePage').style.display = 'none'; // 隱藏遊戲
             window.scrollTo(0,0);
         }
-
         // ========== 二手轉讓邏輯 ==========
         function previewResaleImage(input) {
             const preview = document.getElementById('resaleImagePreview');
@@ -990,6 +1101,73 @@
             showNotification('留言發送成功');
             closeModal('contactModal');
         }
+
+        let currentSlide = 0;
+let autoSlideTimer;
+
+// 修改：選取前 8 個商品來做輪播 (4個看得到，4個在旁邊預備)
+function displayFeaturedProducts() {
+    const featuredContainer = document.getElementById('featuredProducts');
+    
+    // 這裡改為選取 8 個商品
+    const featuredItems = products.slice(0, 8); 
+    
+    featuredContainer.innerHTML = featuredItems.map(p => `
+        <div class="product-card">
+            <div class="product-image">${p.category}</div>
+            <div class="product-info">
+                <h3>${p.name}</h3>
+                <p>$${p.price}</p>
+                <button class="add-to-cart-btn" onclick="addToCart(${p.id})">加入購物車</button>
+            </div>
+        </div>`).join('');
+    
+    // 啟動輪播
+    resetAutoSlide(); 
+}
+
+// 修正：移動邏輯 (確保計算 visibleCards 正確)
+function moveSlide(direction) {
+    const container = document.getElementById('featuredProducts');
+    const cards = container.getElementsByClassName('product-card');
+    if (cards.length === 0) return;
+
+    // 根據目前的視窗寬度判斷「現在看得到幾個」
+    let visibleCards = 4;
+    if (window.innerWidth <= 600) visibleCards = 1;
+    else if (window.innerWidth <= 850) visibleCards = 2;
+    else if (window.innerWidth <= 1100) visibleCards = 3;
+
+    const maxSlide = cards.length - visibleCards;
+
+    currentSlide += direction;
+
+    // 循環滾動邏輯
+    if (currentSlide > maxSlide) currentSlide = 0;
+    if (currentSlide < 0) currentSlide = maxSlide;
+
+    // 獲取第一張卡片的實際寬度(含外邊距)
+    const cardWidth = cards[0].getBoundingClientRect().width + 30; 
+    container.style.transform = `translateX(${-currentSlide * cardWidth}px)`;
+}
+
+// 自動輪播功能
+function startAutoSlide() {
+    autoSlideTimer = setInterval(() => {
+        moveSlide(1);
+    }, 4000); // 每 4 秒捲動一次
+}
+
+function resetAutoSlide() {
+    clearInterval(autoSlideTimer);
+    startAutoSlide();
+}
+
+// 監聽視窗大小改變，避免排版跑掉
+window.addEventListener('resize', () => {
+    currentSlide = 0;
+    document.getElementById('featuredProducts').style.transform = `translateX(0)`;
+});
 
         // ========== 簽到與點數邏輯 ==========
         function loadCheckInData() {
@@ -1088,14 +1266,26 @@
 
         // ========== 商品與購物車邏輯 ==========
         function generateProducts() {
-            let id = 1;
-            categories.forEach(cat => {
-                for (let i = 0; i < 6; i++) {
-                    products.push({ id: id++, name: `${cat} 單品 #${i + 1}`, category: cat, price: Math.floor(Math.random() * 1500) + 300, isFeatured: i === 0 });
-                }
+    let id = 1;
+    categories.forEach(cat => {
+        for (let i = 1; i <= 6; i++) {
+            // 定義圖片路徑：假設您的圖片命名為 分類+數字.jpg (例如: 帽子1.jpg)
+            // 如果您還沒準備好圖片，這裡可以先放您的檔名
+            let imgPath = `${cat}${i}.jpg`; 
+            console.log(imgPath);
+
+            products.push({ 
+                id: id++, 
+                name: `${cat} 單品 #${i}`, 
+                category: cat, 
+                price: Math.floor(Math.random() * 1500) + 300, 
+                isFeatured: i === 1,
+                image: imgPath // 新增圖片屬性
             });
-            filteredProducts = [...products];
         }
+    });
+    filteredProducts = [...products];
+}
         function openCart() { displayCart(); document.getElementById('cartModal').classList.add('active'); }
         function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
         
@@ -1163,15 +1353,42 @@
             if (item) item.quantity++; else cart.push({ ...p, quantity: 1 });
             saveCart(); showNotification('已加入購物車');
         }
-        function saveCart() { localStorage.setItem('cart', JSON.stringify(cart)); document.getElementById('cartCount').textContent = cart.reduce((a, b) => a + b.quantity, 0); }
-        function loadCart() { const s = localStorage.getItem('cart'); if (s) { cart = JSON.parse(s); saveCart(); } }
+function saveCart() { 
+            if (currentUser) {
+                localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart)); 
+            } else {
+                localStorage.removeItem('cart'); // 未登入則清空通用暫存
+            }
+            document.getElementById('cartCount').textContent = cart.reduce((a, b) => a + b.quantity, 0); 
+        }
+// 修改：載入該帳號專屬的購物車
+        function loadCart() { 
+            if (currentUser) {
+                const s = localStorage.getItem(`cart_${currentUser.email}`); 
+                cart = s ? JSON.parse(s) : []; 
+            } else {
+                cart = []; 
+            }
+            document.getElementById('cartCount').textContent = cart.reduce((a, b) => a + b.quantity, 0);
+        }
 
         function displayFeaturedProducts() {
-            document.getElementById('featuredProducts').innerHTML = products.filter(p => p.isFeatured).slice(0, 4).map(p => `
-                <div class="product-card">
-                    <div class="product-image">${p.category}</div>
-                    <div class="product-info"><h3>${p.name}</h3><p>$${p.price}</p><button class="add-to-cart-btn" onclick="addToCart(${p.id})">加入購物車</button></div>
-                </div>`).join('');
+        const featuredContainer = document.getElementById('featuredProducts');
+        const featuredItems = products.filter(p => p.isFeatured).slice(0, 8); 
+    
+        featuredContainer.innerHTML = featuredItems.map(p => `
+        <div class="product-card">
+            <div class="product-image" style="background: white;">
+                <img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="product-info">
+                <h3>${p.name}</h3>
+                <p>$${p.price}</p>
+                <button class="add-to-cart-btn" onclick="addToCart(${p.id})">加入購物車</button>
+            </div>
+        </div>`).join('');
+    
+        resetAutoSlide(); 
         }
         function displayCategories() {
             document.getElementById('categoryGrid').innerHTML = categories.map((cat, i) => `<div class="category-card" onclick="filterByCategory('${cat}')"><h1>${categoryIcons[i]}</h1><p>${cat}</p></div>`).join('');
@@ -1180,17 +1397,36 @@
             document.getElementById('filterCategoryContainer').innerHTML = categories.map(cat => `<div class="filter-option"><input type="checkbox" class="cat-check" id="cat-${cat}" onchange="filterProducts()"><label>${cat}</label></div>`).join('');
         }
         function displayProducts() {
-            document.getElementById('productsGrid').innerHTML = filteredProducts.map(p => `
-                <div class="product-card">
-                    <div class="product-image">${p.category}</div>
-                    <div class="product-info"><h3>${p.name}</h3><p>$${p.price}</p><button class="add-to-cart-btn" onclick="addToCart(${p.id})">加入購物車</button></div>
-                </div>`).join('');
-        }
+    document.getElementById('productsGrid').innerHTML = filteredProducts.map(p => `
+        <div class="product-card">
+            <div class="product-image" style="background: white;">
+                <img src="${p.image}" alt="${p.name}" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+            <div class="product-info">
+                <h3>${p.name}</h3>
+                <p>$${p.price}</p>
+                <button class="add-to-cart-btn" onclick="addToCart(${p.id})">加入購物車</button>
+            </div>
+        </div>`).join('');
+}
         function filterProducts() {
+            // 獲取所有過濾條件的值
             const max = document.getElementById('priceRange').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase(); // 關鍵字
+            const checkedCategories = Array.from(document.querySelectorAll('.cat-check:checked'))
+                                           .map(el => el.id.replace('cat-', ''));
+            
             document.getElementById('priceValue').textContent = max;
-            const checked = Array.from(document.querySelectorAll('.cat-check:checked')).map(el => el.id.replace('cat-', ''));
-            filteredProducts = products.filter(p => p.price <= max && (checked.length === 0 || checked.includes(p.category)));
+
+            // 執行複合過濾
+            filteredProducts = products.filter(p => {
+                const matchesPrice = p.price <= max;
+                const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(p.category);
+                const matchesSearch = p.name.toLowerCase().includes(searchTerm); // 關鍵字過濾
+                
+                return matchesPrice && matchesCategory && matchesSearch;
+            });
+
             displayProducts();
         }
         function filterByCategory(cat) { goToShop(); document.querySelectorAll('.cat-check').forEach(el => el.checked = el.id === `cat-${cat}`); filterProducts(); }
@@ -1296,23 +1532,23 @@
     })();
 
     /* 2. 頁面切換：隱藏原有的，顯示遊戲的 */
-    function switchToGamePage() {
-        // 隱藏您原本代碼中定義的所有頁面
-        const originalPages = ['homePage', 'shopPage', 'resalePage'];
-        originalPages.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.style.display = 'none';
-        });
-        
-        // 顯示遊戲頁
-        document.getElementById('miniGamePage').style.display = 'block';
-        initGamePlaceholder();
-    }
+/* 修改：遊戲頁面切換邏輯 */
+        function switchToGamePage() {
+            // 隱藏所有其他頁面
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('shopPage').style.display = 'none';
+            document.getElementById('resalePage').style.display = 'none';
+            
+            // 顯示遊戲頁
+            document.getElementById('miniGamePage').style.display = 'block';
+            initGamePlaceholder();
+            window.scrollTo(0,0);
+        }
 
-    function backToMainFromGame() {
-        document.getElementById('miniGamePage').style.display = 'none';
-        goToHome(); // 呼叫您原本的 goToHome 函式
-    }
+        /* 修改：從遊戲返回首頁 */
+        function backToMainFromGame() {
+            goToHome(); // 直接呼叫整合後的 goToHome
+        }
 
     /* 3. 記憶遊戲邏輯 */
     const fashionIcons = ['👗', '👕', '👖', '🧥', '👠', '🎩', '🧤', '👜'];
@@ -1325,6 +1561,25 @@
         document.getElementById('gameGridBox').innerHTML = '<p style="grid-column: span 4; color:#999; padding:20px;">點擊下方按鈕開始</p>';
         document.getElementById('gameActionBtn').style.display = 'block';
     }
+
+    /* 1. 自動掛載：在導航欄自動插入「小遊戲」按鈕 */
+    (function injectGameButton() {
+        window.addEventListener('load', () => {
+            const navLinks = document.querySelector('.nav-links');
+            if (navLinks && !document.getElementById('extraGameLink')) {
+                const gameLink = document.createElement('a');
+                gameLink.href = "#";
+                gameLink.innerHTML = "🎮 小遊戲";
+                gameLink.id = "extraGameLink";
+                gameLink.onclick = function(e) {
+                    e.preventDefault();
+                    switchToGamePage(); // 呼叫切換至遊戲頁面的函式
+                };
+                // 將按鈕插入在「簽到」之前
+                navLinks.insertBefore(gameLink, navLinks.querySelector('a[onclick*="openCheckIn"]') || navLinks.firstChild);
+            }
+        });
+    })();
 
     function runMemoryGameStart() {
         if (!currentUser) {
@@ -1364,6 +1619,50 @@
             setTimeout(checkGameMatchResult, 700);
         }
     }
+    
+    function checkoutProcess() {
+            if (cart.length === 0) return showNotification('購物車是空的', 'error');
+            
+            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            let bestPrice = subtotal;
+            let appliedCouponIndex = -1; // 用於記錄被使用的優惠券索引
+
+            // 1. 尋找最佳優惠券並記錄其位置
+            if (currentUser && checkInData.coupons.length > 0) {
+                checkInData.coupons.forEach((coupon, index) => {
+                    let currentPrice = subtotal;
+                    if (coupon.type === 'percent') {
+                        currentPrice = Math.floor(subtotal * coupon.value);
+                    } else if (coupon.type === 'cash') {
+                        currentPrice = Math.max(0, subtotal - coupon.value);
+                    }
+                    
+                    if (currentPrice < bestPrice) {
+                        bestPrice = currentPrice;
+                        appliedCouponIndex = index; // 記錄這張券的 index
+                    }
+                });
+            }
+
+            // 2. 更新會員累計消費金額
+            currentUser.totalSpent = (currentUser.totalSpent || 0) + bestPrice;
+            localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
+            updateMemberRank();
+
+            // 3. 關鍵修改：如果使用了優惠券，將其從使用者的資料中移除
+            if (appliedCouponIndex !== -1) {
+                const usedCouponName = checkInData.coupons[appliedCouponIndex].text;
+                checkInData.coupons.splice(appliedCouponIndex, 1); // 移除該優惠券
+                saveCheckInData(); // 儲存更新後的點數與優惠券資料
+                console.log(`已使用並移除優惠券：${usedCouponName}`);
+            }
+
+            // 4. 清空購物車與後續提示
+            cart = [];
+            saveCart();
+            closeCart();
+            showNotification(`結帳成功！本次實付 $${bestPrice}，已移除使用的優惠券。`, 'success');
+        }
 
     function checkGameMatchResult() {
         const [c1, c2] = flippedIndices;
@@ -1389,51 +1688,205 @@
         flippedIndices = [];
         isLocking = false;
     }
-    // 透過 JavaScript 覆蓋您原本的 displayCart 函式
-    // 這樣瀏覽器在執行時會優先使用這個「有刪除按鈕」的版本
-    window.displayCart = function() {
-        const container = document.getElementById('cartItems');
-        const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
-        
-        // 智慧折扣套用邏輯 (維持您原本的邏輯)
-        let bestPrice = subtotal;
-        let appliedCoupon = null;
+// 修改：顯示購物車並處理手動挑選優惠券
+        window.displayCart = function() {
+            const container = document.getElementById('cartItems');
+            const selector = document.getElementById('couponSelector');
+            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            
+            // 更新下拉選單內容（僅在開啟購物車或更新時執行）
+            const savedCouponIndex = selector.value;
+            selector.innerHTML = '<option value="-1">不使用優惠券</option>' + 
+                checkInData.coupons.map((c, i) => `<option value="${i}" ${savedCouponIndex == i ? 'selected' : ''}>${c.text}</option>`).join('');
 
-        if (currentUser && checkInData.coupons && checkInData.coupons.length > 0) {
-            checkInData.coupons.forEach(coupon => {
-                let currentPrice = subtotal;
+            let finalPrice = subtotal;
+            let appliedCoupon = null;
+            const selectedIndex = parseInt(selector.value);
+
+            // 如果使用者選了某張券
+            if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
+                appliedCoupon = checkInData.coupons[selectedIndex];
+                if (appliedCoupon.type === 'percent') {
+                    finalPrice = Math.floor(subtotal * appliedCoupon.value);
+                } else if (appliedCoupon.type === 'cash') {
+                    finalPrice = Math.max(0, subtotal - appliedCoupon.value);
+                }
+            }
+
+            // 渲染商品清單 (保留您要求的刪除按鈕功能)
+            if (cart.length === 0) {
+                container.innerHTML = '購物車空空的';
+            } else {
+                container.innerHTML = cart.map((item, index) => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:5px; border-bottom:1px solid #eee">
+                        <div style="flex:1">
+                            <div style="font-weight:bold">${item.name}</div>
+                            <div style="font-size:12px; color:#666">$${item.price} x ${item.quantity}</div>
+                        </div>
+                        <div style="font-weight:bold; margin-right:15px">$${item.price * item.quantity}</div>
+                        <button onclick="removeCartItem(${index})" style="background:#ff4757; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:12px">❌ 刪除</button>
+                    </div>
+                `).join('');
+            }
+
+            const discInfo = document.getElementById('discountInfo');
+            if (appliedCoupon && cart.length > 0) {
+                discInfo.textContent = `✨ 已套用：${appliedCoupon.text}`;
+                document.getElementById('cartTotal').innerHTML = `<del style="color:#999; font-size:14px; margin-right:10px">$${subtotal}</del> $${finalPrice}`;
+            } else {
+                discInfo.textContent = '';
+                document.getElementById('cartTotal').textContent = `$${subtotal}`;
+            }
+        };
+
+// 1. 新增：防呆驗證函式 (這是解決打不開的關鍵)
+
+// 補回：全部折抵按鈕的功能函式
+        window.useMaxPoints = function() {
+            const pointsInput = document.getElementById('usePointsAmount');
+            if (!pointsInput) return;
+
+            // 計算邏輯：取持有點數與當前購物車剩餘金額的最小值，並自動向下取 100 的倍數
+            // 這樣按下去就不會發生輸入超過持有點數或超過商品總價的情況
+            const maxAvailable = Math.floor(checkInData.points / 100) * 100;
+            
+            if (maxAvailable <= 0) {
+                showNotification('目前點數不足 100 點，無法折抵', 'error');
+                pointsInput.value = 0;
+            } else {
+                pointsInput.value = maxAvailable;
+                showNotification(`已自動填入最大可用點數：${maxAvailable} 點`, 'success');
+            }
+
+            // 填入後手動觸發 displayCart() 更新總計金額顯示
+            displayCart();
+        };
+
+window.validatePointsInput = function() {
+    const pointsInput = document.getElementById('usePointsAmount');
+    if (!pointsInput) return 0;
+    
+    let val = parseInt(pointsInput.value);
+
+    // 如果輸入為空或小於 0，重設為 0
+    if (isNaN(val) || val < 0) {
+        // 不必強行改 input 值，讓使用者自己輸入，但計算時回傳 0
+        return 0;
+    }
+
+    // 防呆：上限檢查，不能超過持有的總點數
+    if (val > checkInData.points) {
+        showNotification(`點數不足！您目前僅有 ${checkInData.points} 點`, 'error');
+        val = Math.floor(checkInData.points / 100) * 100; // 自動修正為最大可用的 100 倍數
+        pointsInput.value = val;
+    }
+    
+    // 返回值強制向下取 100 的倍數 (例如 150 -> 100)，確保 100 點折 1 元的邏輯正確
+    return Math.floor(val / 100) * 100;
+};
+
+        // 2. 整合版：顯示購物車 (處理 優惠券 + 點數折抵 + 商品清單)
+        window.displayCart = function() {
+            const container = document.getElementById('cartItems');
+            const selector = document.getElementById('couponSelector');
+            const pointsInput = document.getElementById('usePointsAmount');
+            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            
+            // 更新 UI 點數文字
+            document.querySelectorAll('.points-val').forEach(el => el.textContent = checkInData.points);
+
+            // 更新優惠券選單
+            const savedCouponIndex = selector.value;
+            selector.innerHTML = '<option value="-1">不使用優惠券</option>' + 
+                checkInData.coupons.map((c, i) => `<option value="${i}" ${savedCouponIndex == i ? 'selected' : ''}>${c.text}</option>`).join('');
+
+            let tempPrice = subtotal;
+            let appliedCoupon = null;
+            const selectedIndex = parseInt(selector.value);
+
+            // 計算優惠券
+            if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
+                appliedCoupon = checkInData.coupons[selectedIndex];
+                if (appliedCoupon.type === 'percent') tempPrice = Math.floor(subtotal * appliedCoupon.value);
+                else if (appliedCoupon.type === 'cash') tempPrice = Math.max(0, subtotal - appliedCoupon.value);
+            }
+
+            // 執行點數防呆與計算
+            let usePoints = validatePointsInput();
+            let pointsDiscount = Math.floor(usePoints / 100);
+
+            // 二次防呆：折抵不能大於剩餘金額
+            if (pointsDiscount > tempPrice) {
+                pointsDiscount = tempPrice;
+                usePoints = pointsDiscount * 100;
+                pointsInput.value = usePoints;
+            }
+            
+            const finalPrice = Math.max(0, tempPrice - pointsDiscount);
+
+            // 渲染商品 (包含刪除按鈕)
+            container.innerHTML = cart.length ? cart.map((item, index) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:5px; border-bottom:1px solid #eee">
+                    <div style="flex:1"><div style="font-weight:bold">${item.name}</div><div style="font-size:12px; color:#666">$${item.price} x ${item.quantity}</div></div>
+                    <div style="font-weight:bold; margin-right:10px">$${item.price * item.quantity}</div>
+                    <button onclick="removeCartItem(${index})" style="background:#ff4757; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px">刪除</button>
+                </div>`).join('') : '購物車是空的';
+
+            // 顯示折扣資訊
+            const discInfo = document.getElementById('discountInfo');
+            let infoText = "";
+            if (appliedCoupon && cart.length > 0) infoText += `🎟️ 優惠券：${appliedCoupon.text}<br>`;
+            if (pointsDiscount > 0 && cart.length > 0) infoText += `💰 點數折抵：-$${pointsDiscount} (使用 ${usePoints} 點)`;
+            discInfo.innerHTML = infoText;
+
+            // 更新總金額
+            if ((appliedCoupon || pointsDiscount > 0) && cart.length > 0) {
+                document.getElementById('cartTotal').innerHTML = `<del style="color:#999; font-size:14px; margin-right:10px">$${subtotal}</del> $${finalPrice}`;
+            } else {
+                document.getElementById('cartTotal').textContent = `$${subtotal}`;
+            }
+        };
+
+        // 3. 整合版：結帳流程 (確保扣除選擇的券與正確的點數)
+        window.checkoutProcess = function() {
+            if (cart.length === 0) return showNotification('購物車是空的', 'error');
+            
+            let usePoints = validatePointsInput();
+            const pointsDiscount = Math.floor(usePoints / 100);
+            const actualUsedPoints = pointsDiscount * 100;
+
+            const subtotal = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            const selector = document.getElementById('couponSelector');
+            const selectedIndex = parseInt(selector.value);
+            
+            let currentPrice = subtotal;
+
+            if (selectedIndex !== -1 && checkInData.coupons[selectedIndex]) {
+                const coupon = checkInData.coupons[selectedIndex];
                 if (coupon.type === 'percent') currentPrice = Math.floor(subtotal * coupon.value);
                 else if (coupon.type === 'cash') currentPrice = Math.max(0, subtotal - coupon.value);
-                if (currentPrice < bestPrice) { bestPrice = currentPrice; appliedCoupon = coupon; }
-            });
-        }
+                checkInData.coupons.splice(selectedIndex, 1); // 正式移除選中的優惠券
+            }
 
-        // 修改處：渲染購物車清單時，為每一項新增「刪除」按鈕
-        if (cart.length === 0) {
-            container.innerHTML = '購物車空空的';
-        } else {
-            container.innerHTML = cart.map((item, index) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-bottom:5px; border-bottom:1px solid #eee">
-                    <div style="flex:1">
-                        <div style="font-weight:bold">${item.name}</div>
-                        <div style="font-size:12px; color:#666">$${item.price} x ${item.quantity}</div>
-                    </div>
-                    <div style="font-weight:bold; margin-right:15px">$${item.price * item.quantity}</div>
-                    <button onclick="removeCartItem(${index})" style="background:#ff4757; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:12px">❌ 刪除</button>
-                </div>
-            `).join('');
-        }
+            const finalPrice = Math.max(0, currentPrice - pointsDiscount);
 
-        const discInfo = document.getElementById('discountInfo');
-        if (appliedCoupon && cart.length > 0) {
-            discInfo.textContent = `✨ 已自動套用最佳優惠：${appliedCoupon.text}`;
-            document.getElementById('cartTotal').innerHTML = `<del style="color:#999; font-size:14px; margin-right:10px">$${subtotal}</del> $${bestPrice}`;
-        } else {
-            if(discInfo) discInfo.textContent = '';
-            document.getElementById('cartTotal').textContent = `$${subtotal}`;
-        }
-    };
+            // 正式扣點與儲存
+            checkInData.points -= actualUsedPoints;
+            saveCheckInData();
 
+            // 會員消費累積
+            currentUser.totalSpent = (currentUser.totalSpent || 0) + finalPrice;
+            localStorage.setItem(`user_${currentUser.email}`, JSON.stringify(currentUser));
+            updateMemberRank();
+
+            // 重置介面
+            cart = [];
+            saveCart();
+            document.getElementById('usePointsAmount').value = "";
+            selector.value = "-1";
+            closeCart();
+            showNotification(`支付成功！實付 $${finalPrice}，扣除 ${actualUsedPoints} 點`, 'success');
+        };
     // 新增：處理移除商品的函式
     window.removeCartItem = function(index) {
         // 從全域變數 cart 陣列中移除該索引的商品
