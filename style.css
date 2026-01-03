@@ -642,3 +642,93 @@
         cursor: default;
         border-color: #ddd;
     }
+    /* ========== 新增 RWD 響應式功能 ========== */
+
+/* 1. 全域基礎適配 */
+html, body {
+    overflow-x: hidden; /* 防止手機版左右晃動 */
+}
+
+/* 2. 英雄區 (Hero) 適配 */
+@media (max-width: 768px) {
+    .hero {
+        height: 400px; /* 手機版縮小高度 */
+        background-size: cover; /* 確保背景圖蓋住整個區域 */
+        background-attachment: scroll; /* 手機版固定背景效能較差，改為隨動 */
+    }
+    .hero h1 {
+        font-size: 32px;
+    }
+    .hero p {
+        font-size: 18px;
+    }
+}
+
+/* 3. 主容器佈局適配 (核心改動) */
+@media (max-width: 992px) {
+    .main-container {
+        grid-template-columns: 1fr; /* 側邊欄與商品區改為上下堆疊 */
+        gap: 20px;
+    }
+    .sidebar {
+        position: relative; /* 取消側邊欄固定，避免擋住內容 */
+        top: 0;
+        width: 100%;
+    }
+}
+
+/* 4. 導航欄 (Navbar) 適配 */
+@media (max-width: 600px) {
+    .navbar-container {
+        flex-direction: column; /* Logo 與連結上下排 */
+        gap: 10px;
+        padding: 10px;
+    }
+    .nav-links {
+        gap: 10px;
+        flex-wrap: wrap; /* 連結過多時自動換行 */
+        justify-content: center;
+    }
+    .nav-links a, .nav-links button {
+        font-size: 14px;
+    }
+}
+
+/* 5. 分類網格 (Category Grid) 適配 */
+@media (max-width: 768px) {
+    .category-grid {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* 手機版方塊縮小 */
+    }
+    .category-card {
+        padding: 15px;
+    }
+}
+
+/* 6. 商品卡片圖片比例適配 */
+.product-image {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* 強制圖片區塊為正方形，避免變形 */
+    height: auto;
+}
+
+/* 7. 小遊戲 (Mini Game) 適配 */
+@media (max-width: 500px) {
+    .game-grid {
+        grid-template-columns: repeat(4, 1fr); /* 保持 4 列 */
+        gap: 5px;
+    }
+    .memory-card-unit {
+        font-size: 20px; /* 縮小圖標 */
+    }
+    .game-wrapper {
+        padding: 15px;
+    }
+}
+
+/* 8. 模態框 (Modal Content) 適配 */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%; /* 結帳/登入框佔滿寬度 */
+        padding: 20px;
+    }
+}
