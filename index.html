@@ -19,9 +19,9 @@
                 <span>👗 UHS 時尚服飾店</span>
             </div>
             <div class="nav-links">
-                <a href="#" onclick="goToHome(); return false;">首頁</a>
                 <a href="#" onclick="goToShop(); return false;">商品</a>
                 <a href="#" onclick="goToResale(); return false;">♻️ 二手轉讓</a>
+                <a href="#" onclick="goToResaleMarket(); return false;">🛍️ 二手市集</a>
                 <a href="#" onclick="openSizeAssistant(); return false;">📏 尺碼助手</a>
                 <a href="#" onclick="openContactModal(); return false;">💬 留言</a>
                 <a href="#" onclick="openCheckIn(); return false;">📅 簽到</a>
@@ -115,7 +115,7 @@
     </div>
 
     <div class="modal-overlay" id="userInfoModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
             <button class="close-btn" onclick="closeModal('userInfoModal')">✕</button>
             <h2>📝 會員資訊修改</h2>
             <div style="margin-top: 20px;">
@@ -131,7 +131,15 @@
                 <input type="text" id="updateName" placeholder="修改姓名" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
                 <input type="password" id="updatePassword" placeholder="修改密碼 (留空則不更動)" style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
                 
-                <button class="btn btn-primary" onclick="processUpdateInfo()" style="width: 100%;">儲存修改</button>
+                <button class="btn btn-primary" onclick="processUpdateInfo()" style="width: 100%; margin-bottom: 20px;">儲存修改</button>
+                
+                <!-- 歷史訂單區域 -->
+                <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 20px;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px; color: var(--dark-color);">📦 歷史訂單</h3>
+                    <div id="orderHistoryList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- 動態生成訂單列表 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -166,6 +174,26 @@
                 <h2 class="section-title">🛍️ 商品分類</h2>
                 <div class="category-grid" id="categoryGrid"></div>
             </div>
+        </div>
+    </div>
+
+    <div id="resaleMarketPage" style="display: none; padding-top: 20px; min-height: 100vh;">
+        <div class="main-container">
+            <div class="sidebar">
+                <div class="filter-title">🔍 篩選</div>
+    
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="resaleMarketSearch" placeholder="搜尋衣物名稱..." oninput="filterResaleItems()" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                <div id="resaleMarketCategoryContainer"></div>
+            </div>
+            <div class="products-section" id="resaleMarketGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;"></div>
+        </div>
+        
+        <!-- 空狀態提示 -->
+        <div id="resaleMarketEmpty" style="display: none; text-align: center; padding: 60px 20px; color: #999; max-width: 1200px; margin: 0 auto;">
+            <p style="font-size: 18px; margin-bottom: 10px;">目前還沒有二手衣物</p>
+            <p style="font-size: 14px;">成為第一個分享二手衣物的會員吧！</p>
         </div>
     </div>
 
@@ -301,7 +329,9 @@
         <button class="btn btn-primary" id="gameActionBtn" onclick="runMemoryGameStart()" style="width: 100%;">開始遊戲挑戰</button>
         <button class="btn btn-secondary" onclick="backToMainFromGame()" style="width: 100%; margin-top: 10px;">返回首頁</button>
     </div>
-</div>
+    </div>
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

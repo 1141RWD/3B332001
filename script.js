@@ -112,8 +112,76 @@
             document.getElementById('infoEmail').textContent = currentUser.email;
             document.getElementById('infoTotalSpent').textContent = `$${currentUser.totalSpent || 0}`;
             document.getElementById('updateName').value = currentUser.name;
+            displayOrderHistory(); // 載入歷史訂單
             document.getElementById('userInfoModal').classList.add('active');
             document.getElementById('userDropdown').classList.remove('show');
+        }
+
+        // ========== 歷史訂單邏輯 ==========
+        function displayOrderHistory() {
+            const orderListContainer = document.getElementById('orderHistoryList');
+            if (!orderListContainer) return;
+
+            // 從 localStorage 讀取該會員的訂單歷史
+            const userOrders = JSON.parse(localStorage.getItem(`orders_${currentUser.email}`) || '[]');
+            
+            if (userOrders.length === 0) {
+                orderListContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">目前尚無訂單記錄</p>';
+                return;
+            }
+
+            // 按訂單日期倒序排列（最新的在前）
+            userOrders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+            // 生成訂單列表 HTML
+            orderListContainer.innerHTML = userOrders.map(order => {
+                const orderDate = new Date(order.orderDate).toLocaleString('zh-TW', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const itemsList = order.items.map(item => 
+                    `<div style="font-size: 13px; color: #666; margin: 3px 0;">${item.name} x ${item.quantity} - $${item.price * item.quantity}</div>`
+                ).join('');
+
+                return `
+                    <div class="order-history-item" style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--primary-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-weight: bold; color: var(--dark-color); margin-bottom: 5px;">訂單編號: #${order.orderId}</div>
+                                <div style="font-size: 12px; color: #999;">${orderDate}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; color: var(--primary-color); font-size: 18px;">$${order.finalPrice}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="background: white; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                            <div style="font-size: 13px; color: #666; margin-bottom: 5px;"><strong>收件人：</strong>${order.recipient.name}</div>
+                            <div style="font-size: 13px; color: #666; margin-bottom: 5px;"><strong>電話：</strong>${order.recipient.phone}</div>
+                            <div style="font-size: 13px; color: #666;"><strong>地址：</strong>${order.recipient.address}</div>
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 12px; color: #666; font-weight: bold; margin-bottom: 5px;">購買商品：</div>
+                            ${itemsList}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; color: #666; padding-top: 10px; border-top: 1px solid #ddd;">
+                            <div>
+                                <div>付款方式: ${order.payment}</div>
+                                ${order.coupon !== '無' ? `<div>優惠券: ${order.coupon}</div>` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                ${order.pointsUsed > 0 ? `<div>點數折抵: -$${order.pointsDiscount} (${order.pointsUsed}點)</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function processUpdateInfo() {
@@ -159,6 +227,7 @@
         document.getElementById('homePage').style.display = 'block';
         document.getElementById('shopPage').style.display = 'none';
         document.getElementById('resalePage').style.display = 'none';
+        document.getElementById('resaleMarketPage').style.display = 'none';
         document.getElementById('miniGamePage').style.display = 'none'; // 確保遊戲頁被隱藏
         window.scrollTo(0,0);
         }
@@ -166,6 +235,7 @@
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('shopPage').style.display = 'block';
             document.getElementById('resalePage').style.display = 'none';
+            document.getElementById('resaleMarketPage').style.display = 'none';
             document.getElementById('miniGamePage').style.display = 'none'; // 隱藏遊戲
             window.scrollTo(0,0);
         }
@@ -173,7 +243,18 @@
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('shopPage').style.display = 'none';
             document.getElementById('resalePage').style.display = 'block';
+            document.getElementById('resaleMarketPage').style.display = 'none';
             document.getElementById('miniGamePage').style.display = 'none'; // 隱藏遊戲
+            window.scrollTo(0,0);
+        }
+        function goToResaleMarket() {
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('shopPage').style.display = 'none';
+            document.getElementById('resalePage').style.display = 'none';
+            document.getElementById('resaleMarketPage').style.display = 'block';
+            document.getElementById('miniGamePage').style.display = 'none';
+            renderResaleMarketFilters(); // 渲染分類篩選
+            displayResaleItems(); // 顯示所有二手衣物
             window.scrollTo(0,0);
         }
         // ========== 二手轉讓邏輯 ==========
@@ -194,23 +275,141 @@
             
             const name = document.getElementById('resaleItemName').value;
             const desc = document.getElementById('resaleDescription').value;
-            const img = document.getElementById('resaleImage').value;
+            const category = document.getElementById('resaleCategory').value;
+            const imgInput = document.getElementById('resaleImage');
+            const preview = document.getElementById('resaleImagePreview');
             
             if (!name || !desc) return showNotification('請輸入完整的衣物資訊', 'error');
-            if (!img) return showNotification('請上傳一張衣物圖片', 'error');
+            if (!imgInput.files || !imgInput.files[0]) return showNotification('請上傳一張衣物圖片', 'error');
 
-            // 增加 200 點
-            checkInData.points += 200;
-            saveCheckInData();
+            // 讀取圖片並轉換為 base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                
+                // 創建二手衣物物件
+                const resaleItem = {
+                    id: Date.now(), // 使用時間戳作為唯一 ID
+                    name: name,
+                    category: category,
+                    description: desc,
+                    image: imageData, // base64 圖片數據
+                    sellerName: currentUser.name,
+                    sellerEmail: currentUser.email,
+                    submitDate: new Date().toISOString()
+                };
 
-            showNotification('提交成功！感謝支持永續時尚，200 點數已匯入帳號。', 'success');
+                // 從 localStorage 讀取現有的二手衣物列表
+                let resaleItems = JSON.parse(localStorage.getItem('resaleItems') || '[]');
+                resaleItems.push(resaleItem);
+                
+                // 保存到 localStorage
+                localStorage.setItem('resaleItems', JSON.stringify(resaleItems));
+
+                // 增加 200 點
+                checkInData.points += 200;
+                saveCheckInData();
+
+                showNotification('提交成功！感謝支持永續時尚，200 點數已匯入帳號。', 'success');
+                
+                // 重置表單並回首頁
+                document.getElementById('resaleItemName').value = '';
+                document.getElementById('resaleDescription').value = '';
+                document.getElementById('resaleCategory').value = '衣服';
+                document.getElementById('resaleImage').value = '';
+                preview.style.display = 'none';
+                preview.src = '';
+                goToHome();
+            };
             
-            // 重置表單並回首頁
-            document.getElementById('resaleItemName').value = '';
-            document.getElementById('resaleDescription').value = '';
-            document.getElementById('resaleImage').value = '';
-            document.getElementById('resaleImagePreview').style.display = 'none';
-            goToHome();
+            reader.readAsDataURL(imgInput.files[0]);
+        }
+
+        // ========== 二手市集邏輯 ==========
+        function renderResaleMarketFilters() {
+            const container = document.getElementById('resaleMarketCategoryContainer');
+            const resaleCategories = ['衣服', '褲子', '外套', '配件'];
+            container.innerHTML = resaleCategories.map(cat => 
+                `<div class="filter-option"><input type="checkbox" class="resale-cat-check" id="resale-cat-${cat}" onchange="filterResaleItems()"><label for="resale-cat-${cat}">${cat}</label></div>`
+            ).join('');
+        }
+
+        function displayResaleItems() {
+            const grid = document.getElementById('resaleMarketGrid');
+            const emptyState = document.getElementById('resaleMarketEmpty');
+            
+            // 從 localStorage 讀取所有二手衣物
+            let resaleItems = JSON.parse(localStorage.getItem('resaleItems') || '[]');
+            
+            // 按提交時間倒序排列（最新的在前）
+            resaleItems.sort((a, b) => new Date(b.submitDate) - new Date(a.submitDate));
+            
+            if (resaleItems.length === 0) {
+                if (grid) grid.style.display = 'none';
+                if (emptyState) emptyState.style.display = 'block';
+                return;
+            }
+            
+            if (grid) grid.style.display = 'grid';
+            if (emptyState) emptyState.style.display = 'none';
+            
+            // 應用篩選
+            const filteredItems = filterResaleItemsData(resaleItems);
+            
+            if (filteredItems.length === 0) {
+                if (grid) grid.style.display = 'none';
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                    emptyState.innerHTML = '<p style="font-size: 18px; margin-bottom: 10px;">沒有找到符合條件的二手衣物</p>';
+                }
+                return;
+            }
+            
+            // 生成 HTML - 使用與商品頁相同的 product-card 樣式
+            if (grid) {
+                grid.innerHTML = filteredItems.map(item => {
+                    const submitDate = new Date(item.submitDate).toLocaleDateString('zh-TW', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                    
+                    return `
+                        <div class="product-card">
+                            <div class="product-image" style="background: white;">
+                                <img src="${item.image}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\'%3E%3Crect fill=\'%23ddd\' width=\'200\' height=\'200\'/%3E%3Ctext fill=\'%23999\' font-family=\'sans-serif\' font-size=\'14\' x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' dy=\'.3em\'%3E圖片載入失敗%3C/text%3E%3C/svg%3E'">
+                            </div>
+                            <div class="product-info">
+                                <h3>${item.name}</h3>
+                                <p style="color: var(--secondary-color); font-weight: bold; margin: 5px 0;">${item.category}</p>
+                                <p style="color: #666; font-size: 13px; margin: 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.description}</p>
+                                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 12px; color: #999;">
+                                    <div>👤 ${item.sellerName}</div>
+                                    <div style="margin-top: 5px;">📅 ${submitDate}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function filterResaleItemsData(items) {
+            const searchTerm = (document.getElementById('resaleMarketSearch')?.value || '').toLowerCase();
+            const checkedCategories = Array.from(document.querySelectorAll('.resale-cat-check:checked'))
+                                           .map(el => el.id.replace('resale-cat-', ''));
+            
+            return items.filter(item => {
+                const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || 
+                                    item.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = checkedCategories.length === 0 || checkedCategories.includes(item.category);
+                
+                return matchesSearch && matchesCategory;
+            });
+        }
+
+        function filterResaleItems() {
+            displayResaleItems();
         }
 
         // ========== 尺碼助手邏輯 ==========
@@ -531,6 +730,33 @@ window.addEventListener('resize', () => {
     const orderItemsHTML = cart.map(item => `<li>${item.name} x ${item.quantity} ($${item.price * item.quantity})</li>`).join('');
     const fullAddress = `(${a1}) (${a2}) (${a3}) (${a4})`;
     
+    // 創建訂單物件
+    const order = {
+        orderId: Date.now(), // 使用時間戳作為訂單 ID
+        orderDate: new Date().toISOString(),
+        items: cart.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        })),
+        recipient: {
+            name: name,
+            phone: phone,
+            address: fullAddress
+        },
+        payment: payment,
+        subtotal: subtotal,
+        coupon: usedCouponText,
+        pointsUsed: actualUsedPoints,
+        pointsDiscount: pointsDiscount,
+        finalPrice: finalPrice
+    };
+
+    // 儲存訂單到該會員的訂單歷史
+    let userOrders = JSON.parse(localStorage.getItem(`orders_${currentUser.email}`) || '[]');
+    userOrders.push(order);
+    localStorage.setItem(`orders_${currentUser.email}`, JSON.stringify(userOrders));
+    
     document.getElementById('orderDetailContent').innerHTML = `
         <p><strong>收件人：</strong> ${name}</p>
         <p><strong>聯絡電話：</strong> ${phone}</p>
@@ -671,7 +897,7 @@ function saveCart() {
     (function injectGameButton() {
         window.addEventListener('load', () => {
             const navLinks = document.querySelector('.nav-links');
-            if (navLinks) {
+            if (navLinks && !document.getElementById('extraGameLink')) {
                 const gameLink = document.createElement('a');
                 gameLink.href = "#";
                 gameLink.innerHTML = "🎮 小遊戲";
@@ -680,8 +906,16 @@ function saveCart() {
                     e.preventDefault();
                     switchToGamePage();
                 };
-                // 插入在「簽到」按鈕前面，不破壞原結構
-                navLinks.insertBefore(gameLink, navLinks.firstChild);
+                // 找到「每日一抽」按鈕，插入到它的後面
+                const luckyWheelLink = navLinks.querySelector('a[onclick*="openLuckyWheel"]');
+                if (luckyWheelLink && luckyWheelLink.nextSibling) {
+                    navLinks.insertBefore(gameLink, luckyWheelLink.nextSibling);
+                } else if (luckyWheelLink) {
+                    navLinks.appendChild(gameLink);
+                } else {
+                    // 如果找不到「每日一抽」，則插入到最後
+                    navLinks.appendChild(gameLink);
+                }
             }
         });
     })();
@@ -693,6 +927,7 @@ function saveCart() {
             document.getElementById('homePage').style.display = 'none';
             document.getElementById('shopPage').style.display = 'none';
             document.getElementById('resalePage').style.display = 'none';
+            document.getElementById('resaleMarketPage').style.display = 'none';
             
             // 顯示遊戲頁
             document.getElementById('miniGamePage').style.display = 'block';
@@ -730,8 +965,16 @@ function saveCart() {
                     e.preventDefault();
                     switchToGamePage(); // 呼叫切換至遊戲頁面的函式
                 };
-                // 將按鈕插入在「簽到」之前
-                navLinks.insertBefore(gameLink, navLinks.querySelector('a[onclick*="openCheckIn"]') || navLinks.firstChild);
+                // 找到「每日一抽」按鈕，插入到它的後面
+                const luckyWheelLink = navLinks.querySelector('a[onclick*="openLuckyWheel"]');
+                if (luckyWheelLink && luckyWheelLink.nextSibling) {
+                    navLinks.insertBefore(gameLink, luckyWheelLink.nextSibling);
+                } else if (luckyWheelLink) {
+                    navLinks.appendChild(gameLink);
+                } else {
+                    // 如果找不到「每日一抽」，則插入到最後
+                    navLinks.appendChild(gameLink);
+                }
             }
         });
     })();
@@ -966,3 +1209,33 @@ window.validatePointsInput = function() {
         // 呼叫您原本的 showNotification()
         showNotification('商品已從購物車移除', 'success');
     };
+
+    // ========== 鼠標軌跡效果 ==========
+    let trailCount = 0;
+    const maxTrails = 15; // 最多同時顯示的軌跡數量
+
+    document.addEventListener('mousemove', function(e) {
+        // 限制軌跡數量，避免性能問題
+        if (trailCount >= maxTrails) return;
+
+        // 創建軌跡元素
+        const trail = document.createElement('div');
+        trail.className = 'mouse-trail';
+        trail.style.left = e.clientX + 'px';
+        trail.style.top = e.clientY + 'px';
+        
+        // 隨機大小變化，讓軌跡更自然
+        const size = Math.random() * 10 + 15;
+        trail.style.width = size + 'px';
+        trail.style.height = size + 'px';
+        
+        document.body.appendChild(trail);
+        trailCount++;
+
+        // 動畫結束後移除元素
+        setTimeout(() => {
+            trail.remove();
+            trailCount--;
+        }, 600);
+    });
+
